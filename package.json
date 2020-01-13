@@ -1,0 +1,34 @@
+{
+	"private": true,
+	"name": "pan-european-public-transport",
+	"description": "Get public transport data across Europe.",
+	"version": "1.0.0",
+	"main": "index.js",
+	"files": [
+		"index.js",
+		"example.js"
+	],
+	"keywords": [
+		"public transport",
+		"transit",
+		"routing"
+	],
+	"author": "Jannis R <mail@jannisr.de>",
+	"homepage": "https://github.com/derhuerst/pan-european-public-transport",
+	"repository": "derhuerst/pan-european-public-transport",
+	"bugs": "https://github.com/derhuerst/pan-european-public-transport/issues",
+	"license": "ISC",
+	"engines": {
+		"node": ">=10"
+	},
+	"dependencies": {
+	},
+	"devDependencies": {
+		"tap-min": "^2.0.0",
+		"tape": "^4.10.1"
+	},
+	"scripts": {
+		"test": "env NODE_ENV=dev node test.js | tap-min",
+		"prepublishOnly": "npm test"
+	}
+}
