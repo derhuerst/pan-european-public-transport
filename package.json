@@ -23,6 +23,7 @@
 		"node": ">=10"
 	},
 	"dependencies": {
+		"@turf/boolean-point-in-polygon": "^6.0.1",
 		"@turf/buffer": "^5.1.5",
 		"@turf/union": "^6.0.3",
 		"db-hafas": "^5.0.0",

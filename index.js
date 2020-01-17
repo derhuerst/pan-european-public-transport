@@ -1,5 +1,6 @@
 'use strict'
 
+const isPointInPolygon = require('@turf/boolean-point-in-polygon').default
 const debug = require('debug')('pan-european-routing')
 const {
 	routingEndpoints,
@@ -15,7 +16,11 @@ const formatLocation = (loc, name) => {
 	throw new Error('invalid ' + name)
 }
 
-const journeys = await (from, to, opt = {}) => {
+const inside = (polygon, point) => {
+	return isPointInPolygon([point.longitude, point.latitude], polygon)
+}
+
+const journeys = async (from, to, opt = {}) => {
 	const _from = formatLocation(from, 'from')
 	const _to = formatLocation(to, 'to')
 
@@ -23,19 +28,20 @@ const journeys = await (from, to, opt = {}) => {
 		return inside(bbox, _from) && inside(bbox, _to)
 	})
 	if (!endpoint) throw new Error('no endpoint covers from & to')
-	const [_, __, clientName, client] = endpoint[3]
+	const [_, __, clientName, client] = endpoint
 	debug(`using ${clientName} for routing`, {from, to})
 
 	// todo: compute stable IDs
-	let {journeys} = client.journeys(_from, _to, opt)
+	let {journeys} = await client.journeys(_from, _to, opt)
 	for (const enrichLeg of enrichLegFns) {
-		journeys = await Promise.all(async (journey) => ({
+		const enrichJourney = async (journey) => ({
 			...journey,
 			// todo: debug logging
 			legs: await Promise.all(journey.legs.map((leg) => {
 				return enrichLeg(leg).catch(() => leg)
 			}))
-		}))
+		})
+		journeys = await Promise.all(journeys.map(enrichJourney))
 	}
 
 	return {journeys}
