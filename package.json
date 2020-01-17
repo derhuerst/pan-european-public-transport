@@ -23,6 +23,8 @@
 		"node": ">=10"
 	},
 	"dependencies": {
+		"@turf/buffer": "^5.1.5",
+		"@turf/union": "^6.0.3",
 		"db-hafas": "^5.0.0",
 		"debug": "^4.1.1",
 		"vbb-hafas": "^7.0.1"
