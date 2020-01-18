@@ -4,7 +4,7 @@ const isPointInPolygon = require('@turf/boolean-point-in-polygon').default
 const debug = require('debug')('pan-european-routing')
 const {
 	routingEndpoints,
-	enrichLegFns: enrich
+	enrichLegFns
 } = require('./lib/endpoints')
 
 const formatLocation = (loc, name) => {
@@ -31,18 +31,27 @@ const journeys = async (from, to, opt = {}) => {
 	const [_, __, clientName, client] = endpoint
 	debug(`using ${clientName} for routing`, {from, to})
 
-	// todo: compute stable IDs
+	opt = {stopovers: true, ...opt}
 	let {journeys} = await client.journeys(_from, _to, opt)
-	for (const [srcClientName, enrichClientName, enrichLeg] of enrich) {
-		if (srcClientName !== clientName) continue
-		// todo: filter by `enrichClientName`, e.g. by geolocation?
+	// todo: compute stable IDs
 
+	const enrich = enrichLegFns.filter(([srcClientName]) => {
+		return srcClientName === clientName
+		// todo: filter by `enrichClientName`, e.g. using geolocation?
+	})
+	for (const [_, enrichClientName, enrichLeg] of enrich) {
 		const enrichJourney = async (journey) => ({
 			...journey,
-			// todo: debug logging
-			legs: await Promise.all(journey.legs.map((leg) => {
-				debug('enriching leg with', clientName, leg.tripId, leg.line && leg.line.name)
-				return enrichLeg(leg).catch(() => leg)
+			legs: await Promise.all(journey.legs.map(async (leg) => {
+				if (leg.walking) return leg
+
+				debug('enriching leg with', enrichClientName, leg.tripId, leg.line && leg.line.name)
+				try {
+					return await enrichLeg(leg)
+				} catch (err) {
+					debug('enriching failed', err)
+					return leg
+				}
 			}))
 		})
 		journeys = await Promise.all(journeys.map(enrichJourney))
