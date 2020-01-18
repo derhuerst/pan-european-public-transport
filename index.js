@@ -4,7 +4,7 @@ const isPointInPolygon = require('@turf/boolean-point-in-polygon').default
 const debug = require('debug')('pan-european-routing')
 const {
 	routingEndpoints,
-	enrichLegFns
+	enrichLegFns: enrich
 } = require('./lib/endpoints')
 
 const formatLocation = (loc, name) => {
@@ -33,11 +33,15 @@ const journeys = async (from, to, opt = {}) => {
 
 	// todo: compute stable IDs
 	let {journeys} = await client.journeys(_from, _to, opt)
-	for (const enrichLeg of enrichLegFns) {
+	for (const [srcClientName, enrichClientName, enrichLeg] of enrich) {
+		if (srcClientName !== clientName) continue
+		// todo: filter by `enrichClientName`, e.g. by geolocation?
+
 		const enrichJourney = async (journey) => ({
 			...journey,
 			// todo: debug logging
 			legs: await Promise.all(journey.legs.map((leg) => {
+				debug('enriching leg with', clientName, leg.tripId, leg.line && leg.line.name)
 				return enrichLeg(leg).catch(() => leg)
 			}))
 		})
