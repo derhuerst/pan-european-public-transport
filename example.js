@@ -17,13 +17,21 @@ const inLeipzig = {
 	address: 'Kita "Grünschnabel", Leipzig',
 	latitude: 51.323274, longitude: 12.421322
 }
+const inHamburg =  {
+	type: 'location',
+	address: 'Hansestadt Hamburg - Neustadt, Johannisbollwerk 6',
+	latitude: 53.545056, longitude: 9.974467
+}
 
 ;(async () => {
-	// const brandenburg = await journeys(inBerlin, inBrandenburg)
-	// console.log('brandenburg', brandenburg.journeys)
+	const toBrandenburg = await journeys(inBerlin, inBrandenburg)
+	console.log('toBrandenburg', toBrandenburg.journeys)
 
-	const germany = await journeys(inBerlin, inLeipzig, {results: 1})
-	console.log('germany', germany.journeys)
+	const toLeipzig = await journeys(inBerlin, inLeipzig, {results: 1})
+	console.log('toLeipzig', toLeipzig.journeys[0])
+
+	const toHamburg = await journeys(inBerlin, inHamburg, {results: 1})
+	console.log('toHamburg', toHamburg.journeys[0])
 
 	// todo
 })()
