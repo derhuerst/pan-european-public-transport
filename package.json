@@ -32,7 +32,7 @@
 		"find-hafas-leg-in-another-hafas": "^2.0.0",
 		"hafas-client": "^5.0.3",
 		"lodash": "^4.17.15",
-		"slug": "^2.1.0",
+		"normalize-for-search": "^2.1.0",
 		"tokenize-db-station-name": "^2.2.1",
 		"tokenize-vbb-station-name": "^1.1.0",
 		"topojson-client": "^3.1.0",
