@@ -1,11 +1,11 @@
 'use strict'
 
-const isPointInPolygon = require('@turf/boolean-point-in-polygon').default
 const debug = require('debug')('pan-european-routing')
 const {
 	routingEndpoints,
 	enrichLegFns
 } = require('./lib/endpoints')
+const {isInside} = require('./lib/helpers')
 
 const formatLocation = (loc, name) => {
 	if ('object' !== typeof loc || !loc) {
@@ -16,16 +16,12 @@ const formatLocation = (loc, name) => {
 	throw new Error('invalid ' + name)
 }
 
-const inside = (polygon, point) => {
-	return isPointInPolygon([point.longitude, point.latitude], polygon)
-}
-
 const journeys = async (from, to, opt = {}) => {
 	const _from = formatLocation(from, 'from')
 	const _to = formatLocation(to, 'to')
 
-	const endpoint = routingEndpoints.find(([_, bbox]) => {
-		return inside(bbox, _from) && inside(bbox, _to)
+	const endpoint = routingEndpoints.find(([_, serviceArea]) => {
+		return isInside(_from, serviceArea) && isInside(_to, serviceArea)
 	})
 	if (!endpoint) throw new Error('no endpoint covers from & to')
 	const [_, __, clientName, client] = endpoint
