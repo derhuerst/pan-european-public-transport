@@ -28,32 +28,38 @@ const journeys = async (from, to, opt = {}) => {
 	debug(`using ${clientName} for routing`, {from, to})
 
 	opt = {stopovers: true, ...opt}
-	let {journeys} = await client.journeys(_from, _to, opt)
+	const {journeys} = await client.journeys(_from, _to, opt)
 	// todo: compute stable IDs
 
-	const enrich = enrichLegFns.filter(([srcClientName]) => {
-		return srcClientName === clientName
-		// todo: filter by `enrichClientName`, e.g. using geolocation?
-	})
-	for (const [_, enrichClientName, enrichLeg] of enrich) {
-		const enrichJourney = async (journey) => ({
-			...journey,
-			legs: await Promise.all(journey.legs.map(async (leg) => {
-				if (leg.walking) return leg
+	const enrich = enrichLegFns
+	.filter(([srcClientName]) => srcClientName === clientName)
 
-				debug('enriching leg with', enrichClientName, leg.tripId, leg.line && leg.line.name)
-				try {
-					return await enrichLeg(leg)
-				} catch (err) {
-					debug('enriching failed', err)
-					return leg
-				}
-			}))
-		})
-		journeys = await Promise.all(journeys.map(enrichJourney))
+	const enrichLeg = async (leg) => {
+		if (leg.walking) return leg
+
+		// This works like a "parallel" reduce/fold.
+		let enrichedLeg = leg
+		await Promise.all(enrich.map(async ([_, clientName, matchLeg]) => {
+			debug('enriching leg with', clientName, leg.tripId, leg.line && leg.line.name)
+			try {
+				const enrichLeg = await matchLeg(leg)
+				if (enrichLeg) enrichedLeg = enrichLeg(enrichedLeg)
+			} catch (err) {
+				if (err.name === 'ReferenceError' || err.name === 'TypeError') throw err
+				debug('enriching failed', err)
+			}
+		}))
+		return enrichedLeg
 	}
 
-	return {journeys}
+	const enrichJourney = async (journey) => ({
+		...journey,
+		legs: await Promise.all(journey.legs.map(enrichLeg))
+	})
+
+	return {
+		journeys: await Promise.all(journeys.map(enrichJourney))
+	}
 }
 
 module.exports = {
