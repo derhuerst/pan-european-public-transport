@@ -31,6 +31,7 @@
 		"debug": "^4.1.1",
 		"find-hafas-leg-in-another-hafas": "^2.0.0",
 		"hafas-client": "^5.0.3",
+		"insa-hafas": "^1.0.0",
 		"lodash": "^4.17.15",
 		"normalize-for-search": "^2.1.0",
 		"tokenize-db-station-name": "^2.2.1",

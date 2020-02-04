@@ -22,6 +22,12 @@ const inHamburg =  {
 	address: 'Hansestadt Hamburg - Neustadt, Johannisbollwerk 6',
 	latitude: 53.545056, longitude: 9.974467
 }
+const inHalle = {
+	type: 'location',
+	id: '980508377',
+	address: 'Halle - Giebichenstein, Große Brunnenstraße 3',
+	latitude: 51.500594, longitude: 11.956175
+}
 
 ;(async () => {
 	const toBrandenburg = await journeys(inBerlin, inBrandenburg)
@@ -32,6 +38,9 @@ const inHamburg =  {
 
 	const toHamburg = await journeys(inBerlin, inHamburg, {results: 1})
 	console.log('toHamburg', toHamburg.journeys[0])
+
+	const toHalle = await journeys(inBerlin, inHalle, {results: 1})
+	console.log('toHalle', toHalle.journeys[0])
 
 	// todo
 })()
