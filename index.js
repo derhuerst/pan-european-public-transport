@@ -25,7 +25,7 @@ const journeys = async (from, to, opt = {}) => {
 	})
 	if (!endpoint) throw new Error('no endpoint covers from & to')
 	const [_, __, clientName, client] = endpoint
-	debug(`using ${clientName} for routing`, {from, to})
+	debug(`using ${clientName} for routing`, from, to)
 
 	opt = {stopovers: true, ...opt}
 	const {journeys} = await client.journeys(_from, _to, opt)
@@ -40,7 +40,6 @@ const journeys = async (from, to, opt = {}) => {
 		// This works like a "parallel" reduce/fold.
 		let enrichedLeg = leg
 		await Promise.all(enrich.map(async ([_, clientName, matchLeg]) => {
-			debug('enriching leg with', clientName, leg.tripId, leg.line && leg.line.name)
 			try {
 				const enrichLeg = await matchLeg(leg)
 				if (enrichLeg) enrichedLeg = enrichLeg(enrichedLeg)

@@ -24,6 +24,14 @@ todo
 ```
 
 
+## Related
+
+- [`find-hafas-leg-in-another-hafas`](https://github.com/derhuerst/find-hafas-leg-in-another-hafas) – Find a journey leg from one HAFAS endpoint in another one.
+- [`vbb-hafas`](https://github.com/derhuerst/vbb-hafas) – JavaScript client for the VBB HAFAS API.
+- [`db-hafas`](https://github.com/derhuerst/db-hafas) – JavaScript client for the DB HAFAS API.
+- [`insa-hafas`](https://github.com/derhuerst/insa-hafas) – JavaScript client for the NASA/INSA HAFAS API.
+
+
 ## Contributing
 
 If you have a question or need support using `pan-european-public-transport`, please double-check your code and setup first. If you think you have found a bug or want to propose a feature, refer to [the issues page](https://github.com/derhuerst/pan-european-public-transport/issues).
