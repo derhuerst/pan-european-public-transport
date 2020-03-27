@@ -1,11 +1,16 @@
 'use strict'
 
+// const pSeries = require('p-series')
 const debug = require('debug')('pan-european-routing')
 const {
 	routingEndpoints,
 	enrichLegFns
 } = require('./lib/endpoints')
 const {isInside} = require('./lib/helpers')
+
+// todo: make this an option
+// const pAll = pSeries
+const pAll = tasks => Promise.all(tasks.map(task => task()))
 
 const formatLocation = (loc, name) => {
 	if ('object' !== typeof loc || !loc) {
@@ -39,7 +44,7 @@ const journeys = async (from, to, opt = {}) => {
 
 		// This works like a "parallel" reduce/fold.
 		let enrichedLeg = leg
-		await Promise.all(enrich.map(async ([_, clientName, matchLeg]) => {
+		await pAll(enrich.map(([_, clientName, matchLeg]) => async () => {
 			try {
 				const enrichLeg = await matchLeg(leg)
 				if (enrichLeg) enrichedLeg = enrichLeg(enrichedLeg)
@@ -53,11 +58,11 @@ const journeys = async (from, to, opt = {}) => {
 
 	const enrichJourney = async (journey) => ({
 		...journey,
-		legs: await Promise.all(journey.legs.map(enrichLeg))
+		legs: await pAll(journey.legs.map(leg => () => enrichLeg(leg)))
 	})
 
 	return {
-		journeys: await Promise.all(journeys.map(enrichJourney))
+		journeys: await pAll(journeys.map(j => () => enrichJourney(j)))
 	}
 }
 
