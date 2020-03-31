@@ -3,8 +3,9 @@
 // const pSeries = require('p-series')
 const debug = require('debug')('pan-european-routing')
 const {
-	routingEndpoints,
-	enrichLegFns
+	endpoints,
+	enrichLegFns,
+	enrichArrDepFns,
 } = require('./lib/endpoints')
 const {isInside} = require('./lib/helpers')
 
@@ -12,7 +13,7 @@ const {isInside} = require('./lib/helpers')
 // const pAll = pSeries
 const pAll = tasks => Promise.all(tasks.map(task => task()))
 
-const formatLocation = (loc, name) => {
+const asLocation = (loc, name) => {
 	if ('object' !== typeof loc || !loc) {
 		throw new Error(name + ' must be an object')
 	}
@@ -21,11 +22,51 @@ const formatLocation = (loc, name) => {
 	throw new Error('invalid ' + name)
 }
 
-const journeys = async (from, to, opt = {}) => {
-	const _from = formatLocation(from, 'from')
-	const _to = formatLocation(to, 'to')
+const _stationBoard = async (method, station, opt = {}) => {
+	const loc = asLocation(station, 'station')
+	const endpoint = endpoints.find(([_, serviceArea]) => {
+		return isInside(loc, serviceArea)
+	})
+	if (!endpoint) throw new Error('no endpoint covers this location')
+	const [
+		_, __,
+		clientName, client,
+		normalizeStopName, normalizeLineName,
+	] = endpoint
+	debug(`using ${clientName} for fetching ${method} at`, station)
 
-	const endpoint = routingEndpoints.find(([_, serviceArea]) => {
+	opt = {...opt, remarks: true}
+	const arrsDeps = await client[method](station, opt)
+	// todo: compute stable IDs
+
+	const enrich = enrichArrDepFns
+	.filter(([srcClientName]) => srcClientName === clientName)
+	const enrichArrDep = async (arrDep) => {
+		// This works like a "parallel" reduce/fold.
+		let enrichedArrDep = arrDep
+		await pAll(enrich.map(([_, __, matchArrDep]) => async () => {
+			try {
+				const enrich = await matchArrDep(arrDep)
+				if (enrich) enrichedArrDep = enrich(enrichedArrDep)
+			} catch (err) {
+				if (err.name === 'ReferenceError' || err.name === 'TypeError') throw err
+				debug('enriching failed', err)
+			}
+		}))
+		return enrichedArrDep
+	}
+
+	return await pAll(arrsDeps.map(arrDep => () => enrichArrDep(arrDep)))
+}
+
+const departures = _stationBoard.bind(null, 'departures')
+const arrivals = _stationBoard.bind(null, 'arrivals')
+
+const journeys = async (from, to, opt = {}) => {
+	const _from = asLocation(from, 'from')
+	const _to = asLocation(to, 'to')
+
+	const endpoint = endpoints.find(([_, serviceArea]) => {
 		return isInside(_from, serviceArea) && isInside(_to, serviceArea)
 	})
 	if (!endpoint) throw new Error('no endpoint covers from & to')
@@ -67,5 +108,6 @@ const journeys = async (from, to, opt = {}) => {
 }
 
 module.exports = {
+	departures, arrivals,
 	journeys
 }

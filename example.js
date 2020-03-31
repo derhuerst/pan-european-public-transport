@@ -1,6 +1,6 @@
 'use strict'
 
-const {journeys} = require('.')
+const {journeys, departures} = require('.')
 
 const inBerlin = {
 	type: 'location',
