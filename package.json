@@ -30,7 +30,7 @@
 		"db-clean-station-name": "^1.2.0",
 		"db-hafas": "^5.0.0",
 		"debug": "^4.1.1",
-		"find-hafas-leg-in-another-hafas": "^3.0.0",
+		"find-hafas-leg-in-another-hafas": "^3.3.0",
 		"hafas-client": "^5.0.3",
 		"insa-hafas": "^1.0.0",
 		"lodash": "^4.17.15",
