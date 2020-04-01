@@ -22,15 +22,13 @@ const asLocation = (loc, name) => {
 	throw new Error('invalid ' + name)
 }
 
-const _stationBoard = async (method, station, opt = {}) => {
+const _stationBoard = async (method, clientName, station, opt = {}) => {
 	const loc = asLocation(station, 'station')
-	const endpoint = endpoints.find(([_, serviceArea]) => {
-		return isInside(loc, serviceArea)
-	})
-	if (!endpoint) throw new Error('no endpoint covers this location')
+	const endpoint = endpoints.find(([_, __, cName]) => cName === clientName)
+	if (!endpoint) throw new Error('invalid endpoint/client name')
 	const [
-		_, __,
-		clientName, client,
+		_, __, ___,
+		client,
 		normalizeStopName, normalizeLineName,
 	] = endpoint
 	debug(`using ${clientName} for fetching ${method} at`, station)
@@ -46,7 +44,7 @@ const _stationBoard = async (method, station, opt = {}) => {
 		let enrichedArrDep = arrDep
 		await pAll(enrich.map(([_, __, matchArrDep]) => async () => {
 			try {
-				const enrich = await matchArrDep(arrDep)
+				const enrich = await matchArrDep(method, arrDep)
 				if (enrich) enrichedArrDep = enrich(enrichedArrDep)
 			} catch (err) {
 				if (err.name === 'ReferenceError' || err.name === 'TypeError') throw err

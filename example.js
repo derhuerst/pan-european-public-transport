@@ -28,6 +28,15 @@ const inHalle = {
 	address: 'Halle - Giebichenstein, Große Brunnenstraße 3',
 	latitude: 51.500594, longitude: 11.956175
 }
+const inWroclaw = {
+	type: 'stop',
+	id: '5100069',
+	name: 'Wroclaw (PL), Glowny',
+	location: {
+		type: 'location', address: 'Wroclaw (PL), Glowny',
+		latitude: 51.098075, longitude: 17.037084
+	}
+}
 
 ;(async () => {
 	const toBrandenburg = await journeys(inBerlin, inBrandenburg)
@@ -41,6 +50,9 @@ const inHalle = {
 
 	const toHalle = await journeys(inBerlin, inHalle, {results: 1})
 	console.log('toHalle', toHalle.journeys[0])
+
+	const depsInWroclaw = await departures('db', inWroclaw, {when: '2020-06-01T08:00+02:00', duration: 2})
+	console.log('depsInWroclaw[0]', depsInWroclaw[0])
 
 	// todo
 })()
