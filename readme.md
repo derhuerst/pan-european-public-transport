@@ -84,7 +84,7 @@ This will use the [Deutsche Bahn endpoint](lib/db.js) and enrich the journey wit
 
 - [*Why linked open transit data?*](https://github.com/public-transport/why-linked-open-transit-data)
 - [Linked Connections](https://linkedconnections.org)
-- [`find-hafas-leg-in-another-hafas`](https://github.com/derhuerst/find-hafas-leg-in-another-hafas) – Find a journey leg from one HAFAS endpoint in another one.
+- [`find-hafas-data-in-another-hafas`](https://github.com/derhuerst/find-hafas-data-in-another-hafas) – Find data from one HAFAS endpoint in another one.
 - [`stable-public-transport-ids`](https://github.com/derhuerst/stable-public-transport-ids) – Get stable IDs for public transport stations, etc.
 - [`vbb-hafas`](https://github.com/derhuerst/vbb-hafas) – JavaScript client for the VBB HAFAS API.
 - [`db-hafas`](https://github.com/derhuerst/db-hafas) – JavaScript client for the DB HAFAS API.

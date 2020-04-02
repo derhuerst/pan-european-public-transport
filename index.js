@@ -22,23 +22,23 @@ const asLocation = (loc, name) => {
 	throw new Error('invalid ' + name)
 }
 
-const _stationBoard = async (method, clientName, station, opt = {}) => {
+const _stationBoard = async (method, endpointName, station, opt = {}) => {
 	const loc = asLocation(station, 'station')
-	const endpoint = endpoints.find(([_, __, cName]) => cName === clientName)
+	const endpoint = endpoints.find(([_, __, cName]) => cName === endpointName)
 	if (!endpoint) throw new Error('invalid endpoint/client name')
 	const [
 		_, __, ___,
 		client,
 		normalizeStopName, normalizeLineName,
 	] = endpoint
-	debug(`using ${clientName} for fetching ${method} at`, station)
+	debug(`using ${endpointName} for fetching ${method} at`, station)
 
 	opt = {...opt, remarks: true}
 	const arrsDeps = await client[method](station, opt)
 	// todo: compute stable IDs
 
 	const enrich = enrichArrDepFns
-	.filter(([srcClientName]) => srcClientName === clientName)
+	.filter(([srcEndpointName]) => srcEndpointName === endpointName)
 	const enrichArrDep = async (arrDep) => {
 		// This works like a "parallel" reduce/fold.
 		let enrichedArrDep = arrDep
@@ -68,22 +68,22 @@ const journeys = async (from, to, opt = {}) => {
 		return isInside(_from, serviceArea) && isInside(_to, serviceArea)
 	})
 	if (!endpoint) throw new Error('no endpoint covers from & to')
-	const [_, __, clientName, client] = endpoint
-	debug(`using ${clientName} for routing`, from, to)
+	const [_, __, endpointName, client] = endpoint
+	debug(`using ${endpointName} for routing`, from, to)
 
 	opt = {stopovers: true, ...opt}
 	const {journeys} = await client.journeys(_from, _to, opt)
 	// todo: compute stable IDs
 
 	const enrich = enrichLegFns
-	.filter(([srcClientName]) => srcClientName === clientName)
+	.filter(([srcEndpointName]) => srcEndpointName === endpointName)
 
 	const enrichLeg = async (leg) => {
 		if (leg.walking) return leg
 
 		// This works like a "parallel" reduce/fold.
 		let enrichedLeg = leg
-		await pAll(enrich.map(([_, clientName, matchLeg]) => async () => {
+		await pAll(enrich.map(([_, endpointName, matchLeg]) => async () => {
 			try {
 				const enrichLeg = await matchLeg(leg)
 				if (enrichLeg) enrichedLeg = enrichLeg(enrichedLeg)
