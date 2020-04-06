@@ -34,6 +34,7 @@
 		"find-hafas-data-in-another-hafas": "^4.0.0",
 		"hafas-client": "^5.0.3",
 		"hafas-client-health-check": "^2.1.0",
+		"hafas-rest-api": "^3.0.0",
 		"insa-hafas": "^1.0.0",
 		"lodash": "^4.17.15",
 		"normalize-for-search": "^2.1.0",
@@ -49,12 +50,14 @@
 	},
 	"devDependencies": {
 		"eslint": "^6.8.0",
+		"pino-pretty": "^4.0.0",
 		"tap-min": "^2.0.0",
 		"tape": "^4.10.1"
 	},
 	"scripts": {
 		"test": "env NODE_ENV=dev node test.js | tap-min",
 		"lint": "eslint .",
+		"start": "node api/index.js",
 		"prepublishOnly": "npm run lint && npm test"
 	}
 }
