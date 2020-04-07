@@ -1,6 +1,6 @@
 # pan-european-public-transport
 
-**Public transport routing across Europe.** Merges data from API endpoints for various regions to get better data than what *one* endpoint provides.
+**Public transport routing across Europe.** Merges data from API endpoints for various regions, in order to get better data than what *one* endpoint provides.
 
 [![npm version](https://img.shields.io/npm/v/pan-european-public-transport.svg)](https://www.npmjs.com/package/pan-european-public-transport)
 [![build status](https://api.travis-ci.org/derhuerst/pan-european-public-transport.svg?branch=master)](https://travis-ci.org/derhuerst/pan-european-public-transport)
@@ -31,6 +31,12 @@ For a [routing](https://en.wikipedia.org/wiki/Shortest_path_problem#Applications
 	- their coverage/service area
 	- a [list of rules which data to use each endpoint for](lib/rules.js)
 3. for each leg, try to **find the equivalent leg in each endpoint and merge it** with the one fetched first
+
+For a departures/arrivals request for a station A, it will
+
+1. **fetch results** from the "most local" endpoint that covers A
+2. **identify other endpoints that may have additional data**
+3. for each arrival/departure, try to **find its equivalents in those endpoints and merge them**
 
 *Note:* Right now, this only works with [`hafas-client@5`](https://github.com/public-transport/hafas-client/tree/5)-compatible API clients.
 
@@ -77,7 +83,16 @@ const [enrichedJourney] = toHamburg.journeys
 console.log('enrichedJourney', enrichedJourney)
 ```
 
-This will use the [Deutsche Bahn endpoint](lib/db.js) and enrich the journey with data from the [VBB endpoint](lib/vbb.js) and [HVV endpoint](lib/hvv.js).
+This will use the [Deutsche Bahn endpoint](lib/db.js) for routing and enrich the journey using the [VBB](lib/vbb.js) and [HVV](lib/hvv.js) endpoints.
+
+```js
+const wroclawGlowny = '5100069'
+
+const [enrichedDeparture] = await departures('db', wroclawGlowny, {results: 1})
+console.log('enrichedDeparture', enrichedDeparture)
+```
+
+This will fetch departures at [*Wrocław Główny*](https://en.wikipedia.org/wiki/Wrocław_Główny_railway_station) using the [Deutsche Bahn endpoint](lib/db.js) and enrich each departure using the [PKP endpoint](lib/pkp.js).
 
 
 ## Related
