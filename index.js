@@ -1,7 +1,7 @@
 'use strict'
 
 // const pSeries = require('p-series')
-const debug = require('debug')('pan-european-routing')
+const debug = require('debug')('pan-european-public-transport')
 const {
 	endpoints,
 	enrichLegFns,
