@@ -93,6 +93,7 @@ const inGhent = {
 	// console.log('depsInWroclaw[0]', depsInWroclaw[0])
 
 	// todo
+	process.exit()
 })()
 .catch((err) => {
 	console.error(err)

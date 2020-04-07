@@ -59,6 +59,8 @@ Nevertheless, it
 npm install derhuerst/pan-european-public-transport
 ```
 
+`pan-european-public-transport` expects a Redis server running on `localhost:6379`. You can configure a different hostname/port via the `REDIS_URL` environment variable.
+
 
 ## Usage
 
