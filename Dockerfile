@@ -1,11 +1,16 @@
+FROM node:alpine as builder
+WORKDIR /app
+
+RUN apk add --update git bash
+
+ADD package.json /app
+RUN npm install --production
+
 FROM node:alpine
 WORKDIR /app
 
-ADD package.json /app
-RUN apk add --update git bash && \
-	npm install --production && \
-	rm -rf /tmp/* /var/cache/apk/* ~/.npm
+COPY --from=builder /app/node_modules ./node_modules
+ADD . ./
 
-ADD . /app
 EXPOSE 3000
 CMD ["node", "api/index.js"]
