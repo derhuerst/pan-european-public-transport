@@ -8,10 +8,13 @@ const {
 	enrichArrDepFns,
 } = require('./lib/endpoints')
 const {isInside} = require('./lib/helpers')
+const {client: dbClient} = require('./lib/db')
 
 // todo: make this an option
 // const pAll = pSeries
 const pAll = tasks => Promise.all(tasks.map(task => task()))
+
+const ENRICH = Symbol.for('pan-european-public-transport:enrich')
 
 const asLocation = (loc, name) => {
 	if ('object' !== typeof loc || !loc) {
@@ -36,6 +39,7 @@ const _stationBoard = async (method, endpointName, station, opt = {}) => {
 	opt = {...opt, remarks: true}
 	const arrsDeps = await client[method](station, opt)
 	// todo: compute stable IDs
+	if (opt[ENRICH] === false) return arrsDeps
 
 	const enrich = enrichArrDepFns
 	.filter(([srcEndpointName]) => srcEndpointName === endpointName)
@@ -74,6 +78,7 @@ const journeys = async (from, to, opt = {}) => {
 	opt = {stopovers: true, ...opt}
 	const {journeys} = await client.journeys(_from, _to, opt)
 	// todo: compute stable IDs
+	if (opt[ENRICH] === false) return {journeys}
 
 	const enrich = enrichLegFns
 	.filter(([srcEndpointName]) => srcEndpointName === endpointName)
@@ -105,7 +110,11 @@ const journeys = async (from, to, opt = {}) => {
 	}
 }
 
-module.exports = {
-	departures, arrivals,
-	journeys
-}
+const client = Object.create(dbClient)
+client.ENRICH = ENRICH
+
+client.departures = departures
+client.arrivals = arrivals
+client.journeys = journeys
+
+module.exports = client

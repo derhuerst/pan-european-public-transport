@@ -67,7 +67,7 @@ npm install derhuerst/pan-european-public-transport
 The API mimicks the [`hafas-client@5` API](https://github.com/public-transport/hafas-client/blob/5/docs/readme.md).
 
 ```js
-const {journeys} = require('pan-european-public-transport')
+const client = require('pan-european-public-transport')
 
 const inBerlin = {
 	type: 'location',
@@ -80,7 +80,7 @@ const inHamburg =  {
 	latitude: 53.545056, longitude: 9.974467
 }
 
-const toHamburg = await journeys(inBerlin, inHamburg, {results: 1})
+const toHamburg = await client.journeys(inBerlin, inHamburg, {results: 1})
 const [enrichedJourney] = toHamburg.journeys
 console.log('enrichedJourney', enrichedJourney)
 ```
@@ -90,7 +90,7 @@ This will use the [Deutsche Bahn endpoint](lib/db.js) for routing and enrich the
 ```js
 const wroclawGlowny = '5100069'
 
-const [enrichedDeparture] = await departures('db', wroclawGlowny, {results: 1})
+const [enrichedDeparture] = await client.departures('db', wroclawGlowny, {results: 1})
 console.log('enrichedDeparture', enrichedDeparture)
 ```
 
