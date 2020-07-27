@@ -103,9 +103,9 @@ This will fetch departures at [*Wrocław Główny*](https://en.wikipedia.org/wik
 - [Linked Connections](https://linkedconnections.org)
 - [`find-hafas-data-in-another-hafas`](https://github.com/derhuerst/find-hafas-data-in-another-hafas) – Find data from one HAFAS endpoint in another one.
 - [`stable-public-transport-ids`](https://github.com/derhuerst/stable-public-transport-ids) – Get stable IDs for public transport stations, etc.
-- [`vbb-hafas`](https://github.com/derhuerst/vbb-hafas) – JavaScript client for the VBB HAFAS API.
-- [`db-hafas`](https://github.com/derhuerst/db-hafas) – JavaScript client for the DB HAFAS API.
-- [`insa-hafas`](https://github.com/derhuerst/insa-hafas) – JavaScript client for the NASA/INSA HAFAS API.
+- [`vbb-hafas`](https://github.com/public-transport/vbb-hafas) – JavaScript client for the VBB HAFAS API.
+- [`db-hafas`](https://github.com/public-transport/db-hafas) – JavaScript client for the DB HAFAS API.
+- [`insa-hafas`](https://github.com/public-transport/insa-hafas) – JavaScript client for the NASA/INSA HAFAS API.
 
 
 ## Contributing
