@@ -39,7 +39,7 @@
 		"normalize-for-search": "^2.1.0",
 		"p-series": "^2.1.0",
 		"redis": "^3.0.2",
-		"slug": "^2.1.1",
+		"slug": "^3.3.4",
 		"tokenize-db-station-name": "^2.2.1",
 		"tokenize-insa-station-name": "^1.1.0",
 		"tokenize-vbb-station-name": "^1.1.0",
@@ -48,9 +48,9 @@
 		"world-atlas": "^2.0.2"
 	},
 	"devDependencies": {
-		"eslint": "^6.8.0",
+		"eslint": "^7.8.1",
 		"tap-min": "^2.0.0",
-		"tape": "^4.10.1"
+		"tape": "^5.0.1"
 	},
 	"scripts": {
 		"test": "env NODE_ENV=dev node test.js | tap-min",
