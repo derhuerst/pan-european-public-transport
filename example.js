@@ -1,5 +1,6 @@
 'use strict'
 
+const {Console} = require('console')
 const {journeys, departures} = require('.')
 
 const inBerlin = {
@@ -64,32 +65,66 @@ const inGhent = {
 	}
 }
 
+// note: this calculation is not timezone- & locale-aware!
+const DAY = 24 * 60 * 60 * 1000
+const daysTilMonday = 8 - new Date().getDay()
+const d = new Date(Date.now() + daysTilMonday * DAY)
+d.setHours(10)
+d.setMinutes(0)
+d.setSeconds(0)
+d.setMilliseconds(0)
+const when = d.toISOString()
+
+const console = new Console({
+	stdout: process.stdout,
+	stderr: process.stderr,
+	inspectOptions: {depth: 4},
+})
+
 ;(async () => {
-	// const toBrandenburg = await journeys(inBerlin, inBrandenburg)
+	// const toBrandenburg = await journeys(inBerlin, inBrandenburg, {
+	// 	departure: when,
+	// })
 	// console.log('toBrandenburg', toBrandenburg.journeys)
 
-	// const toLeipzig = await journeys(inBerlin, inLeipzig, {results: 1})
+	// const toLeipzig = await journeys(inBerlin, inLeipzig, {
+	// 	departure: when, results: 1,
+	// })
 	// console.log('toLeipzig', toLeipzig.journeys[0])
 
-	const toHamburg = await journeys(inBerlin, inHamburg, {results: 1})
+	const toHamburg = await journeys(inBerlin, inHamburg, {
+		departure: when, results: 1,
+	})
 	console.log('toHamburg', toHamburg.journeys[0])
 
-	// const toHalle = await journeys(inBerlin, inHalle, {results: 1})
+	// const toHalle = await journeys(inBerlin, inHalle, {
+	// 	departure: when, results: 1,
+	// })
 	// console.log('toHalle', toHalle.journeys[0])
 
-	// const toCopenhagen = await journeys(inBerlin, inCopenhagen, {results: 1})
+	// const toCopenhagen = await journeys(inBerlin, inCopenhagen, {
+	// 	departure: when, results: 1,
+	// })
 	// console.log('toCopenhagen', toCopenhagen.journeys[0])
 
-	// const toGraz = await journeys(inBerlin, inGraz, {results: 1})
+	// const toGraz = await journeys(inBerlin, inGraz, {
+	// 	departure: when, results: 1,
+	// })
 	// console.log('toGraz', toGraz.journeys[0])
 
-	// const toWroclaw = await journeys(inBerlin, inWroclaw, {results: 1})
+	// const toWroclaw = await journeys(inBerlin, inWroclaw, {
+	// 	departure: when, results: 1,
+	// })
 	// console.log('toWroclaw', toWroclaw.journeys[0])
 
-	// const toGhent = await journeys(inBerlin, inGhent, {results: 1})
+	// const toGhent = await journeys(inBerlin, inGhent, {
+	// 	departure: when, results: 1,
+	// })
 	// console.log('toGhent', toGhent.journeys[0])
 
-	// const depsInWroclaw = await departures('db', inWroclaw, {when: '2020-06-01T08:00+02:00', duration: 2})
+	// const depsInWroclaw = await departures('db', inWroclaw, {
+	// 	when, duration: 2,
+	// })
 	// console.log('depsInWroclaw[0]', depsInWroclaw[0])
 
 	// todo
