@@ -20,12 +20,12 @@
 	"bugs": "https://github.com/derhuerst/pan-european-public-transport/issues",
 	"license": "ISC",
 	"engines": {
-		"node": ">=10"
+		"node": ">=12"
 	},
 	"dependencies": {
 		"@turf/boolean-point-in-polygon": "^6.0.1",
-		"@turf/buffer": "^5.1.5",
-		"@turf/simplify": "^5.1.5",
+		"@turf/buffer": "^6.3.0",
+		"@turf/simplify": "^6.3.0",
 		"@turf/union": "^6.0.3",
 		"cached-hafas-client": "^3.0.0",
 		"db-clean-station-name": "^1.2.0",
@@ -39,7 +39,7 @@
 		"normalize-for-search": "^2.1.0",
 		"p-series": "^2.1.0",
 		"redis": "^3.0.2",
-		"slug": "^3.3.4",
+		"slug": "^4.0.2",
 		"tokenize-db-station-name": "^2.2.1",
 		"tokenize-insa-station-name": "^1.1.0",
 		"tokenize-vbb-station-name": "^1.1.0",
