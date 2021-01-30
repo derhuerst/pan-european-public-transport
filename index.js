@@ -1,6 +1,6 @@
 'use strict'
 
-// const pSeries = require('p-series')
+const pLimit = require('p-limit')
 const debug = require('debug')('pan-european-public-transport')
 const {
 	endpoints,
@@ -10,11 +10,14 @@ const {
 const {isInside} = require('./lib/helpers')
 const {client: dbClient} = require('./lib/db')
 
-// todo: make this an option
-// const pAll = pSeries
-const pAll = tasks => Promise.all(tasks.map(task => task()))
-
 const ENRICH = Symbol.for('pan-european-public-transport:enrich')
+
+const ENRICH_ARRS_DEPS_CONCURRENCY = process.env.ENRICH_ARRS_DEPS_CONCURRENCY
+	? parseInt(process.env.ENRICH_ARRS_DEPS_CONCURRENCY)
+	: Infinity
+const ENRICH_LEGS_CONCURRENCY = process.env.ENRICH_LEGS_CONCURRENCY
+	? parseInt(process.env.ENRICH_LEGS_CONCURRENCY)
+	: Infinity
 
 const asLocation = (loc, name) => {
 	if ('object' !== typeof loc || !loc) {
@@ -43,10 +46,12 @@ const _stationBoard = async (method, endpointName, station, opt = {}) => {
 
 	const enrich = enrichArrDepFns
 	.filter(([srcEndpointName]) => srcEndpointName === endpointName)
+
+	const limited = pLimit(ENRICH_ARRS_DEPS_CONCURRENCY)
 	const enrichArrDep = async (arrDep) => {
 		// This works like a "parallel" reduce/fold.
 		let enrichedArrDep = arrDep
-		await pAll(enrich.map(([_, __, matchArrDep]) => async () => {
+		await Promise.all(enrich.map(([_, __, matchArrDep]) => limited(async () => {
 			try {
 				const enrich = await matchArrDep(method, arrDep)
 				if (enrich) enrichedArrDep = enrich(enrichedArrDep)
@@ -54,11 +59,11 @@ const _stationBoard = async (method, endpointName, station, opt = {}) => {
 				if (err.name === 'ReferenceError' || err.name === 'TypeError') throw err
 				debug('enriching failed', err)
 			}
-		}))
+		})))
 		return enrichedArrDep
 	}
 
-	return await pAll(arrsDeps.map(arrDep => () => enrichArrDep(arrDep)))
+	return await Promise.all(arrsDeps.map(arrDep => enrichArrDep(arrDep)))
 }
 
 const departures = _stationBoard.bind(null, 'departures')
@@ -83,12 +88,13 @@ const journeys = async (from, to, opt = {}) => {
 	const enrich = enrichLegFns
 	.filter(([srcEndpointName]) => srcEndpointName === endpointName)
 
-	const enrichLeg = async (leg) => {
+	const limited = pLimit(ENRICH_LEGS_CONCURRENCY)
+	const enrichLeg = async (leg, legI) => {
 		if (leg.walking) return leg
 
 		// This works like a "parallel" reduce/fold.
 		let enrichedLeg = leg
-		await pAll(enrich.map(([_, endpointName, matchLeg]) => async () => {
+		await Promise.all(enrich.map(([_, __, matchLeg]) => limited(async () => {
 			try {
 				const enrichLeg = await matchLeg(leg)
 				if (enrichLeg) enrichedLeg = enrichLeg(enrichedLeg)
@@ -96,17 +102,17 @@ const journeys = async (from, to, opt = {}) => {
 				if (err.name === 'ReferenceError' || err.name === 'TypeError') throw err
 				debug('enriching failed', err)
 			}
-		}))
+		})))
 		return enrichedLeg
 	}
 
 	const enrichJourney = async (journey) => ({
 		...journey,
-		legs: await pAll(journey.legs.map(leg => () => enrichLeg(leg)))
+		legs: await Promise.all(journey.legs.map(leg => enrichLeg(leg)))
 	})
 
 	return {
-		journeys: await pAll(journeys.map(j => () => enrichJourney(j)))
+		journeys: await Promise.all(journeys.map(j => enrichJourney(j)))
 	}
 }
 
