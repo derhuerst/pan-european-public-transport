@@ -37,12 +37,12 @@
 		"insa-hafas": "^1.0.0",
 		"lodash": "^4.17.15",
 		"normalize-for-search": "^2.1.0",
+		"normalize-vbb-station-name-for-search": "^1.0.0",
 		"p-limit": "^3.1.0",
 		"redis": "^3.0.2",
 		"slug": "^4.0.2",
 		"tokenize-db-station-name": "^2.2.1",
 		"tokenize-insa-station-name": "^1.1.0",
-		"tokenize-vbb-station-name": "^1.1.0",
 		"topojson-client": "^3.1.0",
 		"vbb-hafas": "^7.0.1",
 		"world-atlas": "^2.0.2"
