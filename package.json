@@ -41,7 +41,7 @@
 		"normalize-vbb-station-name-for-search": "^1.0.0",
 		"p-limit": "^3.1.0",
 		"slug": "^4.0.2",
-		"tokenize-db-station-name": "^2.2.1",
+		"tokenize-db-station-name": "^3.0.0",
 		"tokenize-insa-station-name": "^1.1.0",
 		"topojson-client": "^3.1.0",
 		"vbb-hafas": "^7.0.1",
