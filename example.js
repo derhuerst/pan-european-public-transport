@@ -75,11 +75,13 @@ d.setSeconds(0)
 d.setMilliseconds(0)
 const when = d.toISOString()
 
+// improve debugging experience
 const console = new Console({
 	stdout: process.stdout,
 	stderr: process.stderr,
 	inspectOptions: {depth: 4},
 })
+Error.stackTraceLimit = 40
 
 ;(async () => {
 	// const toBrandenburg = await journeys(inBerlin, inBrandenburg, {

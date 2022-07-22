@@ -6,8 +6,8 @@
 [![build status](https://api.travis-ci.org/derhuerst/pan-european-public-transport.svg?branch=master)](https://travis-ci.org/derhuerst/pan-european-public-transport)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/pan-european-public-transport.svg)
 ![minimum Node.js version](https://img.shields.io/node/v/pan-european-public-transport.svg)
-[![chat with me on Gitter](https://img.shields.io/badge/chat%20with%20me-on%20gitter-512e92.svg)](https://gitter.im/derhuerst)
-[![support me on Patreon](https://img.shields.io/badge/support%20me-on%20patreon-fa7664.svg)](https://patreon.com/derhuerst)
+[![support me via GitHub Sponsors](https://img.shields.io/badge/support%20me-donate-fa7664.svg)](https://github.com/sponsors/derhuerst)
+[![chat with me on Twitter](https://img.shields.io/badge/chat%20with%20me-on%20Twitter-1da1f2.svg)](https://twitter.com/derhuerst)
 
 
 ## Why?
@@ -95,6 +95,14 @@ console.log('enrichedDeparture', enrichedDeparture)
 ```
 
 This will fetch departures at [*Wrocław Główny*](https://en.wikipedia.org/wiki/Wrocław_Główny_railway_station) using the [Deutsche Bahn endpoint](lib/db.js) and enrich each departure using the [PKP endpoint](lib/pkp.js).
+
+### debugging
+
+If you want to find out what it does, run with the following env var:
+
+```bash
+export DEBUG='pan-european-public-transport*,-pan-european-public-transport:hafas*,find-hafas-data-in-another-hafas*'
+```
 
 
 ## Related
